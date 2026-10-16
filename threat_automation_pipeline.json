@@ -1,0 +1,106 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=أنت نظام ذكاء اصطناعي عسكري متقدم (Hybrid AI) مسؤول عن توجيه طائرات الدرون.\n\nسجل المحادثة السابقة بينك وبين القائد (تذكر هذا السياق جيداً):\n{{ $json.body.history }}\n\nبيانات التقييم اللحظي الحالية للدرون:\n{{ JSON.stringify($json.body.drone_context) }}\n\nسؤال القائد الحالي: \n{{ $json.body.question }}\n\nالتعليمات الصارمة:\n1. أجب على السؤال الحالي بناءً على \"سجل المحادثة السابقة\" و\"البيانات الحالية\".\n2. إذا سألك القائد سؤالاً مبنياً على إجابتك السابقة (مثل: \"ماذا تقصد بذلك؟\" أو \"نفذ التوصية\")، افهم السياق فوراً.\n3. قرب الأرقام لمنزلتين عشريتين، وأجب بأسلوب عسكري حازم ومختصر.\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -96
+      ],
+      "id": "a6a70098-0860-483b-916d-3856583ab2b1",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lntf18TVBBviZ9pE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.content.parts[0].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        96,
+        80
+      ],
+      "id": "91e67931-2998-469b-a3fa-e87302b7f378",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c4895708-1203-4095-9991-b5c6ef3461e2",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -400,
+        16
+      ],
+      "id": "1ce22819-83d7-41ca-8f04-f40e111afc6a",
+      "name": "Webhook1",
+      "webhookId": "c4895708-1203-4095-9991-b5c6ef3461e2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f70944aa-049a-4765-ac5f-cb864dbed182",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a5488fe2153fec452b30ffff5b7304a151d41e26328780329ef0e5743db2f90d"
+  },
+  "id": "BS9BjUgk3VoVc0Iv",
+  "tags": []
+}
